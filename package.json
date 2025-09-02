@@ -1,0 +1,22 @@
+{
+  "name": "devconnect-backend",
+  "version": "1.0.0",
+  "description": "tinder like app for developer to connect",
+  "keywords": [
+    "nodeJS",
+    "javascript",
+    "mongoDB",
+    "expressJS"
+  ],
+  "license": "ISC",
+  "author": "Kunal Pandey",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
