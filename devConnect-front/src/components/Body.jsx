@@ -23,14 +23,14 @@ export const Body = () => {
       return user.data;
     } catch (error) {
       if (error.response && error.response.status === 401) {
-        navigate("/login");
+        navigate("/login", { replace: true });
       }
     }
   };
 
   useEffect(() => {
     fetchUser();
-  }, []);
+  }, [dispatch, userData]);
   return (
     <div>
       <NavBar />

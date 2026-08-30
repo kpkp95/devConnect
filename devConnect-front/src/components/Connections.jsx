@@ -1,6 +1,6 @@
 import axios from "axios";
 import { API_BASE_URL } from "../utils/constants";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnections } from "../utils/connectionSlice";
 import { Link } from "react-router";
@@ -8,29 +8,57 @@ import { Link } from "react-router";
 const Connections = () => {
   const connections = useSelector((store) => store.connections);
   const dispatch = useDispatch();
-
-  const fetchConnections = async () => {
-    try {
-      const response = await axios.get(
-        `${API_BASE_URL}/user/requests/connection`,
-        { withCredentials: true },
-      );
-
-      const connectionList = Array.isArray(response.data?.data)
-        ? response.data.data
-        : [];
-
-      dispatch(addConnections(connectionList));
-    } catch (error) {
-      dispatch(addConnections([]));
-    }
-  };
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
+
+    const fetchConnections = async () => {
+      setIsLoading(true);
+
+      try {
+        const response = await axios.get(
+          `${API_BASE_URL}/user/requests/connection`,
+          { withCredentials: true },
+        );
+
+        const connectionList = Array.isArray(response.data?.data)
+          ? response.data.data
+          : [];
+
+        if (isMounted) {
+          dispatch(addConnections(connectionList));
+        }
+      } catch (error) {
+        if (isMounted) {
+          dispatch(addConnections([]));
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
     fetchConnections();
+
+    return () => {
+      isMounted = false;
+    };
   }, [dispatch]);
 
   if (!Array.isArray(connections)) return null;
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[65vh] items-center justify-center px-4 py-10">
+        <div className="flex items-center gap-3 text-base-content/70">
+          <span className="loading loading-spinner loading-md text-primary" />
+          <span>Loading connections...</span>
+        </div>
+      </div>
+    );
+  }
 
   if (connections.length === 0) {
     return (

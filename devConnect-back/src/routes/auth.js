@@ -11,6 +11,13 @@ authRouter.use(express.json()); //this will work for all route
 authRouter.use(cookieParser());
 
 //signup api
+const cookieOptions = {
+  httpOnly: true,
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  secure: process.env.NODE_ENV === "production",
+  path: "/",
+};
+
 authRouter.post("/signup", async (req, res) => {
   try {
     validateSignUpData(req);
@@ -33,9 +40,9 @@ authRouter.post("/signup", async (req, res) => {
     const savedUser = await user.save();
     const token = await savedUser.getJWT();
     res.cookie("token", token, {
-      httpOnly: true,
+      ...cookieOptions,
       expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-    }); // Expires in 1 day
+    });
     res.status(201).json({
       user: savedUser.toObject(),
       message: "User created successfully",
@@ -66,7 +73,7 @@ authRouter.post("/login", async (req, res) => {
       return res.status(400).send({ error: "Invalid credentials" });
     }
     const token = await user.getJWT();
-    res.cookie("token", token, { httpOnly: true });
+    res.cookie("token", token, cookieOptions);
 
     res.status(200).send({
       user: user.toObject(),
@@ -79,7 +86,10 @@ authRouter.post("/login", async (req, res) => {
 
 authRouter.post("/logout", async (req, res) => {
   try {
-    res.cookie("token", null, { httpOnly: true, expires: new Date(0) });
+    res.cookie("token", null, {
+      ...cookieOptions,
+      expires: new Date(0),
+    });
     res.status(200).send({ message: "Logout successful" });
   } catch (err) {
     res.status(400).send({ error: err.message });

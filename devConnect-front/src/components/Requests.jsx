@@ -2,11 +2,12 @@ import axios from "axios";
 import { API_BASE_URL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addRequests, removeRequest } from "../utils/requestSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const Requests = () => {
   const requests = useSelector((store) => store.requests);
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
 
   const reviewRequest = async (status, requestId) => {
     try {
@@ -21,30 +22,57 @@ const Requests = () => {
     }
   };
 
-  const fetchRequests = async () => {
-    try {
-      const response = await axios.get(
-        `${API_BASE_URL}/user/requests/received`,
-        {
-          withCredentials: true,
-        },
-      );
-
-      const requestList = Array.isArray(response.data?.data)
-        ? response.data.data
-        : [];
-
-      dispatch(addRequests(requestList));
-    } catch (err) {
-      dispatch(addRequests([]));
-    }
-  };
-
   useEffect(() => {
+    let isMounted = true;
+
+    const fetchRequests = async () => {
+      setIsLoading(true);
+
+      try {
+        const response = await axios.get(
+          `${API_BASE_URL}/user/requests/received`,
+          {
+            withCredentials: true,
+          },
+        );
+
+        const requestList = Array.isArray(response.data?.data)
+          ? response.data.data
+          : [];
+
+        if (isMounted) {
+          dispatch(addRequests(requestList));
+        }
+      } catch (err) {
+        if (isMounted) {
+          dispatch(addRequests([]));
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
     fetchRequests();
+
+    return () => {
+      isMounted = false;
+    };
   }, [dispatch]);
 
   if (!Array.isArray(requests)) return null;
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-[65vh] items-center justify-center px-4 py-10">
+        <div className="flex items-center gap-3 text-base-content/70">
+          <span className="loading loading-spinner loading-md text-primary" />
+          <span>Loading requests...</span>
+        </div>
+      </div>
+    );
+  }
 
   if (requests.length === 0) {
     return (
