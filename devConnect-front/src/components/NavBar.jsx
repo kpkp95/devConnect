@@ -32,7 +32,10 @@ const NavBar = () => {
     <div>
       <div className="navbar bg-base-300 shadow-sm">
         <div className="flex-1">
-          <Link to={user ? "/" : "/login"} className="btn btn-ghost text-xl">
+          <Link
+            to={user ? "/feed" : "/login"}
+            className="btn btn-ghost text-xl"
+          >
             🤝devConnect
           </Link>
         </div>
