@@ -97,8 +97,12 @@ app.patch("/user", async (req, res) => {
 
 connectDB()
   .then(() => {
-    app.listen(port, () => {});
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+      console.log(`MongoDB connected`);
+    });
   })
   .catch((err) => {
-    // connection failed silently; errors are handled in database config
+    console.error("Failed to start server:", err.message);
+    process.exit(1);
   });
