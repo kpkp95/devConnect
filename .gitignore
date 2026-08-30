@@ -47,6 +47,7 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+.agents/
 
 # Misc
 coverage/

@@ -1,11 +1,22 @@
 # devConnect
 
-A full-stack networking app built for connecting people professionally. The project includes:
+A full-stack professional networking app where users can sign up, build their profile, discover people, and send or manage connection requests.
+
+## Overview
+
+This project is split into two parts:
 
 - Frontend: React + Vite + Redux + Tailwind + DaisyUI
 - Backend: Node.js + Express + MongoDB + Mongoose
-- Auth: JWT stored in an HttpOnly cookie
-- Core features: login/signup, profile editing, feed, connection requests, and connections
+
+Core flows include:
+
+- user signup and login
+- JWT-based authentication with HttpOnly cookies
+- profile viewing and editing
+- personalized feed for discovering users
+- sending and reviewing connection requests
+- display of accepted connections
 
 ## Project structure
 
@@ -13,8 +24,12 @@ A full-stack networking app built for connecting people professionally. The proj
 devConnect/
 ├── devConnect-front/   # React frontend
 ├── devConnect-back/    # Express backend
-├── package.json        # Root package file
-└── skills-lock.json    # Skill lock metadata
+├── README.md           # Project overview
+├── .gitignore          # Git ignore rules
+├── package.json        # Root package file (optional cleanup)
+├── package-lock.json   # Root lock file (optional cleanup)
+├── skills-lock.json    # Tooling metadata
+└── .agents/            # Copilot agent settings
 ```
 
 ## Tech stack
@@ -33,87 +48,75 @@ devConnect/
 
 - Node.js
 - Express
-- MongoDB with Mongoose
-- JWT authentication
-- bcrypt password hashing
+- MongoDB + Mongoose
+- JWT
+- bcrypt
+- cookie-parser
+- validator
 
-## DaisyUI note
+## Getting started
 
-DaisyUI is currently installed at the workspace root package level in the repository, not inside the frontend folder.
-
-If you later want to keep it in the frontend project itself, run:
-
-```bash
-cd devConnect-front
-npm install -D daisyui
-```
-
-## Run the app
-
-### 1) Install dependencies
+### 1) Install backend dependencies
 
 ```bash
 cd devConnect-back
 npm install
+```
 
+### 2) Install frontend dependencies
+
+```bash
 cd ../devConnect-front
 npm install
 ```
 
-### 2) Start backend
+### 3) Start the backend
 
 ```bash
-cd devConnect-back
+cd ../devConnect-back
 npm run dev
 ```
 
-### 3) Start frontend
+### 4) Start the frontend
 
 ```bash
-cd devConnect-front
+cd ../devConnect-front
 npm run dev
 ```
 
-The frontend usually runs on:
+The app usually runs at:
 
-- http://localhost:5173
-
-The backend usually runs on:
-
-- http://localhost:3000
+- Frontend: http://localhost:5173
+- Backend: http://localhost:3000
 
 ## Environment setup
 
-Create a `.env` file inside `devConnect-back` with your local MongoDB connection string:
+Create a `.env` file inside `devConnect-back`:
 
 ```env
 MONGO_URI=mongodb://localhost:27017/devConnect
 ```
 
-Example local setup:
+Example for Windows PowerShell:
 
-```bash
+```powershell
 cd devConnect-back
-copy NUL .env
+New-Item .env -ItemType File
 ```
 
-Then paste:
+Then paste the MongoDB connection string above into the file.
 
-```env
-MONGO_URI=mongodb://localhost:27017/devConnect
-```
+> Keep this file local and do not commit it to Git.
 
-If you later add other secrets, keep them in this file and do not commit it to Git.
+## Main user flow
 
-## Main app flow
-
-- User signs up or logs in
-- JWT is stored in an HttpOnly cookie
-- User can view and update profile
-- Feed shows suggested users
-- Users can send connection requests
-- Requests can be reviewed and accepted or ignored
-- Connected users appear in the connections page
+- Sign up or log in
+- Receive a secure JWT cookie
+- View and update profile data
+- Browse feed suggestions
+- Send connection requests
+- Accept or ignore incoming requests
+- See connected users in the connections page
 
 ## Useful commands
 
@@ -132,4 +135,14 @@ npm run preview
 
 ## Notes
 
-This project is for local development and learning. If you want to deploy it later, add proper environment variables, security hardening, and production hosting setup.
+- Passwords are hashed before being stored in MongoDB.
+- Auth is handled via HttpOnly cookies.
+- This project is intended for local development and learning, but it is structured so it can later be adapted for deployment with proper environment variables and security hardening.
+
+## Future improvements
+
+- real image upload instead of URL-only photo input
+- stronger validation and form UX
+- improved notification system
+- deploy-ready production config
+- optional chat or messaging feature
